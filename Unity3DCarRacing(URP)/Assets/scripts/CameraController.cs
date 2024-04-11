@@ -15,9 +15,6 @@ public class CameraController : MonoBehaviour
 
     // Reference to the car's transform, which the camera will follow
     public Transform carTarget;
-
-    
-
     
 
     void FixedUpdate()

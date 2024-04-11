@@ -61,17 +61,18 @@ public class CarController : MonoBehaviour
         gasInput = Input.GetAxis("Vertical");
         steeringInput = Input.GetAxis("Horizontal");
         slipAngle = Vector3.Angle(transform.forward,Player.velocity-transform.forward);
-        if (slipAngle < 120f)
+        float movingDirection = Vector3.Dot(transform.forward, Player.velocity);
+        if (movingDirection < -0.5f && gasInput > 0)
         {
-            if (gasInput < 0)
-            {
-                brakeInput = Mathf.Abs(gasInput);
-                gasInput = 0;
-            }
+            brakeInput = Mathf.Abs(gasInput);
+        }
+        else if (movingDirection > 0.5f && gasInput < 0)
+        {
+            brakeInput = Mathf.Abs(gasInput);
         }
         else
         {
-                brakeInput = 0; 
+            brakeInput = 0;
         }
         
     }
@@ -81,19 +82,23 @@ public class CarController : MonoBehaviour
         //updating force and gasInput(direction)
         RRWheel.motorTorque = motorTorqueforce * gasInput;  
         RLWheel.motorTorque = motorTorqueforce * gasInput;
+        
     }
 
     //steering degrees should be based on car speed curve
     void ApplySteering()
     {
         // max steerAngle should 65,if speed increase angle should decrease.so,car cant roll
-        //x axis is speed and y axis is steerAngle in AnimationCurve which can happen in inspector
+        //x-axis is speed and y-axis is steerAngle in AnimationCurve which can happen in inspector
         //if under steering problem occurs,change Traction(stiffness),it means  the grip between the tires and the road surface that allows a vehicle to start, stop and/or change direction 
-        float streeingAngle = steeringInput * steeringCurve.Evaluate(speed);//steering curve is based on speed
-        streeingAngle += Vector3.SignedAngle(transform.forward, Player.velocity + transform.forward, Vector3.up);
-        streeingAngle = Mathf.Clamp(streeingAngle, -60f, 60f);
-        FRWheel.steerAngle = streeingAngle;//apply steeringAngle to front wheels
-        FLWheel.steerAngle = streeingAngle;
+        float steeringAngle = steeringInput * steeringCurve.Evaluate(speed);//steering curve is based on speed
+        if (slipAngle < 120f)
+        {
+            steeringAngle += Vector3.SignedAngle(transform.forward, Player.velocity + transform.forward, Vector3.up);
+        }
+        steeringAngle = Mathf.Clamp(steeringAngle, -60f, 60f);
+        FRWheel.steerAngle = steeringAngle;//apply steeringAngle to front wheels
+        FLWheel.steerAngle = steeringAngle;
 
     }
 
@@ -114,10 +119,6 @@ public class CarController : MonoBehaviour
         RRWheel.brakeTorque = brakeInput * brakePower*0.3f;
         RLWheel.brakeTorque = brakeInput * brakePower*0.3f;
     }
-    
-       
-
-
     
 }
 
