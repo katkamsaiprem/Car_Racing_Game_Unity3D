@@ -21,7 +21,6 @@ public class CameraController : MonoBehaviour
     {
         // Call the method to follow the target (car)
         FollowTarget();
-        
     }
 
     void FollowTarget()
@@ -40,7 +39,6 @@ public class CameraController : MonoBehaviour
         // Smoothly move the camera towards the target position
         transform.position = Vector3.Lerp(transform.position, targetPos, moveSmoothness * Time.deltaTime);
     }
-
     void HandleRotation()
     {
         // Calculate the direction from the camera to the car
@@ -53,7 +51,6 @@ public class CameraController : MonoBehaviour
             rotation.eulerAngles.y,
             rotation.eulerAngles.z
         );
-
         // Apply the rotation with smoothing
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotSmoothness * Time.deltaTime);
     }
